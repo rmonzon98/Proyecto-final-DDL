@@ -5,7 +5,6 @@ from AFDFixed.AFD import *
 
 
 if __name__ == "__main__":
-    print(chr(41))
     archivo = input('Ingrese el nombre del archivo: ')
     characters, keywords, tokens, nameATG = read_file(archivo)
     print("-"*40,nameATG,"-"*40)
@@ -34,12 +33,8 @@ if __name__ == "__main__":
     tokensDict, exceptions = createTokensDict(charactersDict, tokens)
     #print('tokensDict',tokensDict)
     tokensArray = functionsCreator(tokensDict, charactersDict)
-"""
-    for i in tokensArray:
-        print(i.getTransitions())
-        i.correctTransitions(charactersDict, specialCharacters, special)
-        print(i.getTransitions())
-
+    
+   
     adfArray = []
     for i in tokensArray:
         name = i.getName()
@@ -49,7 +44,8 @@ if __name__ == "__main__":
         transitionsDict = i.getTransitions()
         temp.setTransition(transitionsDict)
         adfArray.append(temp)
-    
+
+
     exceptions = ['while','do','if','switch']
 
     scanner = fileWritter(nameATG)
@@ -137,4 +133,3 @@ if __name__ == "__main__":
     scanner.writeSentence('#print(tokensFound)')
 
     print(".py escrito con exito")
-"""

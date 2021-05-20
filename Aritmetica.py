@@ -6,19 +6,19 @@ exceptions = ['while','do','if','switch']
 adfArray = []
 ident= 'ident'
 temp = AFD(ident)
-tempidentAcceptance = {0: False, 1: False, 2: False, 3: False, 4: False, 5: False, 6: True, 7: False, 8: False, 9: False, 10: False, 11: False, 12: False, 13: False, 14: False, 15: False}
+tempidentAcceptance = {0: False, 1: True}
 
 temp.setDictAcceptance(tempidentAcceptance)
-tempidentTransitions = {0: {1: ['l']}, 1: {2: {41}}, 2: {3: ['t']}, 3: {4: ['t']}, 4: {5: {41}}, 5: {6: ['r']}, 6: {7: ['l'], 8: ['d']}, 7: {9: {41}}, 8: {10: ['i']}, 9: {11: ['t']}, 10: {12: {46}}, 11: {13: ['t']}, 12: {14: ['i']}, 13: {15: {41}}, 14: {6: ['t']}, 15: {6: ['r']}}
+tempidentTransitions = {0: {1: [{65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122}]}, 1: {1: [{65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122}, {48, 49, 50, 51, 52, 53, 54, 55, 56, 57}]}}
 
 temp.setTransition(tempidentTransitions)
 adfArray.append(temp)
 number= 'number'
 temp = AFD(number)
-tempnumberAcceptance = {0: False, 1: False, 2: False, 3: False, 4: False, 5: True, 6: False, 7: False, 8: False, 9: False}
+tempnumberAcceptance = {0: False, 1: True}
 
 temp.setDictAcceptance(tempnumberAcceptance)
-tempnumberTransitions = {0: {1: {40}}, 1: {2: ['i']}, 2: {3: {46}}, 3: {4: ['i']}, 4: {5: ['t']}, 5: {6: {40}}, 6: {7: ['i']}, 7: {8: {46}}, 8: {9: ['i']}, 9: {5: ['t']}}
+tempnumberTransitions = {0: {1: [{48, 49, 50, 51, 52, 53, 54, 55, 56, 57}]}, 1: {1: [{48, 49, 50, 51, 52, 53, 54, 55, 56, 57}]}}
 
 temp.setTransition(tempnumberTransitions)
 adfArray.append(temp)

@@ -236,19 +236,9 @@ def functionsCreator(tokensDict, charactersDict):
         postfixexpNueva = infixaPostfixWords(nuevaExpresionComputable)+["#","_"]
         #print(postfixexpNueva) 
         #print("")
-
         labelsDstates, acceptance, acceptanceDict = buildAFD(postfixexpNueva)
-        print(expresion)
-        print(postfixexpNueva)
-        print(labelsDstates)
-        print(acceptance)
-        print(acceptanceDict)
-        print()
-        """
         newAFD = AFD(i)
         newAFD.firstConstructor(labelsDstates, acceptanceDict)
         tokensArray.append(newAFD)
-        print("")
-        """
-    print("")
+        
     return tokensArray

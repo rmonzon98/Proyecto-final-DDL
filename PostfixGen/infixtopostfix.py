@@ -48,8 +48,6 @@ def currExp(expresion, charactersDict):
               newExp.append("_")
             else:
               newExp.append(newSet)
-
-        
     #print (temp in keys)
   #print(newExp)
   return newExp

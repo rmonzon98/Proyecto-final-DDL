@@ -1,13 +1,3 @@
-## Tareas: 
-* Implementación de algoritmo de Construcción de Thompson (Listo)
-* Implementación de algoritmo de Construcción de Subconjuntos (listo)
-* Implementación de algoritmo de Construcción de AFD dada una expresión regular r (Listo)
-* Implementación de simulación de un AFN (listo)
-* Implementación de simulación de un AFD (listo)
-NOTA: no tiene ponderación, pero se debe realizar un dubijo del grafo.
-
-
-
-29 201 hola2 r 20.3  20 2.12 -2.4  7h 7hsa s 7H  (.   .) CHR(2)
+hola2
 
 
