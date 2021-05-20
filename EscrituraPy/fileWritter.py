@@ -20,6 +20,9 @@ class fileWritter():
     def addDict(self, name, dictionary):
         self.filename.write((self.tab*self.tabCount + name + ' = '))
         print(dictionary,file =self.filename)
+    
+    def addParagraph(self, sentences):
+        print(sentences,file =self.filename)
 
     def addString(self, name, value):
         self.filename.write("\n")

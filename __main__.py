@@ -1,3 +1,4 @@
+from os import write
 from EscrituraPy.fileWritter import *
 from LecturaATG.fileReader import read_file
 from converter import *
@@ -21,10 +22,7 @@ if __name__ == "__main__":
     print("")
     print("")
     
-    specialCharacters = {}
-    special = {}
-    specialCharacters.update({'C' : set([67]), 'H' : set([72]), 'R' : set([82]), '(' : set([40]), ')' : set([41]), '/' : set([47]), '.' : set([46]), "'" : set([39])})
-    special.update({'C':'a', 'H':'b', 'R':'c', '(':'d', ')':'e', '/':'f', '.':'g', "'" :'h'})
+    print("Escribiendo .py")
 
     charactersDict = createCharactersDict(characters)
     #print('charactersDict',charactersDict)
@@ -44,14 +42,42 @@ if __name__ == "__main__":
         transitionsDict = i.getTransitions()
         temp.setTransition(transitionsDict)
         adfArray.append(temp)
+    
+    for i in tokensArray:
+        i.unifyTransitions()
+        i.deleteNulls()
+    
+    precedence = {}
+    for i in range (0,len(tokensArray)):
+        name = tokensArray[i].getName()
+        precedence.update({name:i})
+    #print(precedence)
+
 
 
     exceptions = ['while','do','if','switch']
 
+    
     scanner = fileWritter(nameATG)
     scanner.writeImport('from AFDFixed.AFD import *')
     scanner.writeSentence('')
+    paragraph="""def get_key(val, my_dict):
+    for key, value in my_dict.items():
+        if val == value:
+            return key
+    return "key doesn't exist"
+
+def isHigher(val1, val2):
+    if val1 < val2:
+        return True
+    else:
+        return False
+    """
+    scanner.addParagraph(paragraph)
+    scanner.writeSentence('')
     scanner.writeSentence("exceptions = ['while','do','if','switch']")
+    scanner.writeSentence('')
+    scanner.addDict("precedence", precedence)
     adfArray = []
     scanner.writeSentence('adfArray = []')
     for i in tokensArray:
@@ -71,65 +97,90 @@ if __name__ == "__main__":
         scanner.writeSentence('temp.setTransition('+'temp'+name+'Transitions'+')')
         adfArray.append(temp)
         scanner.writeSentence('adfArray.append(temp)')
-    scanner.writeSentence("temp = ''")
-    scanner.writeSentence('name = ""')
-    scanner.writeSentence("previousName = ''")
-    scanner.writeSentence("previousAcceptance = ''")
-    scanner.writeSentence("found = False")
-    scanner.writeSentence("tokensFound = []")
-    scanner.writeSentence("#text = 'ho(la  10 123dsa2 sad as ads32 93r 2( sa0d ] &  + s  +  ==1 1 ?823?'")
-    scanner.writeSentence('f = open("tareas.txt", "r")')
-    scanner.writeSentence('text = f.read()')
-    scanner.writeFor('for i in text:')
-    scanner.writeSentence('temp = temp + i')
-    scanner.writeFor('for j in range (0,len(adfArray)):')
-    scanner.writeSentence('found, acceptance, name= adfArray[j].simulation(temp)')
-    scanner.writeIf('if found:')
-    scanner.writeSentence('previousName = name')
-    scanner.writeSentence('previousAcceptance = acceptance')
-    scanner.writeSentence('break')
-    scanner.substractTab()
-    scanner.writeIf('else:')
-    scanner.writeIf('if not(j == len(adfArray)-1):')
-    scanner.writeSentence('pass')
-    scanner.substractTab()
-    scanner.writeIf('else:')
-    scanner.writeSentence('temp = temp[:len(temp)-1]')
-    scanner.writeIf("if not(previousName == '') and not(previousAcceptance == ''):")
-    scanner.writeSentence('tokensFound.append((temp,previousName))')
-    scanner.substractTab()
-    scanner.writeSentence("previousName = ''")
-    scanner.writeSentence('temp = i')
-    scanner.writeFor('for k in adfArray:')
-    scanner.writeSentence('found, acceptance, name= k.simulation(temp)')
-    scanner.writeIf('if found:')
-    scanner.writeSentence('previousName = name')
-    scanner.writeSentence('previousAcceptance = acceptance')
-    scanner.writeSentence('break')
-    scanner.substractTab()
-    scanner.substractTab()
-    scanner.writeIf('if found:')
-    scanner.writeSentence('break')
-    scanner.substractTab()
-    scanner.substractTab()
-    scanner.substractTab()
-    scanner.substractTab()
-    scanner.substractTab()
-    scanner.writeIf('if acceptance:')
-    scanner.writeSentence('tokensFound.append((temp,name))')
-    scanner.substractTab()
-    scanner.writeFor('for i in range(0, len(tokensFound)):')
-    scanner.writeSentence('temp = list(tokensFound[i])')
-    scanner.writeIf('if temp[0] in exceptions:')
-    scanner.writeSentence('index = exceptions.index(temp[0])')
-    scanner.writeSentence('temp[0] = exceptions[index]')
-    scanner.writeSentence('temp[1] = exceptions[index]')
-    scanner.writeSentence('tokensFound[i] = temp')
-    scanner.substractTab()
-    scanner.substractTab()
-    scanner.writeFor('for i in tokensFound:')
-    scanner.writeSentence('print(i)')
-    scanner.substractTab()
-    scanner.writeSentence('#print(tokensFound)')
+    scanner.substractTab() 
+    scanner.writeSentence('')
+    paragraph = """f = open("tareas.txt", "r")
+text = f.read()
 
+temp = ''
+name = ""
+previousName = ''
+previousFound = False
+previousAcceptance = False
+found = False
+tokensFound = []
+
+foundArray = []
+for i in range (0,len(precedence)):
+    foundArray.append(None)
+
+acceptanceArray = []
+for i in range (0,len(precedence)):
+    acceptanceArray.append(None)
+    
+
+for i in text: 
+    for k in range (0,len(precedence)):
+        foundArray[k] = None
+    
+    for k in range (0,len(precedence)):
+        acceptanceArray[k] = None
+
+    temp = temp + i
+
+    for j in range (0,len(precedence)):
+        found, acceptance = adfArray[j].simulation(temp)
+        foundArray[j] = found
+        acceptanceArray[j] = acceptance
+
+    if True in foundArray:
+        if True in acceptanceArray:
+            previousName = get_key(acceptanceArray.index(True),precedence)
+            previousFound = True
+            previousAcceptance = True
+        else:
+            previousName = get_key(foundArray.index(True),precedence)
+            previousFound = True
+
+    else:
+
+        if not(previousName == ''):
+            tokensFound.append([temp[:len(temp)-1],previousName])
+            temp = temp[len(temp)-1]
+            found = False
+            previousName = ''
+
+            for k in range (0,len(precedence)):
+                foundArray[k] = None
+
+            for k in range (0,len(precedence)):
+                acceptanceArray[k] = None
+
+            for l in range (0,len(adfArray)):
+                found, acceptance = adfArray[l].simulation(temp)
+                foundArray[l] = found
+                acceptanceArray[l] = acceptance
+
+            if True in foundArray:
+                if True in acceptanceArray:
+                    previousName = get_key(acceptanceArray.index(True),precedence)
+                    previousFound = True
+                    previousAcceptance = True
+                else:
+                    previousName = get_key(foundArray.index(True),precedence)
+                    previousFound = True
+        
+        else:
+            temp = ''
+
+if True in foundArray:
+    previousName = get_key(foundArray.index(True),precedence)
+    tokensFound.append([temp,previousName])
+
+for i in tokensFound:
+    print(i)
+    """
+    scanner.addParagraph(paragraph)
+
+    
     print(".py escrito con exito")

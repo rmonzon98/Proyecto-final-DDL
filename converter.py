@@ -230,6 +230,7 @@ def functionsCreator(tokensDict, charactersDict):
         expresion = convertOperators(tokensDict.get(i))
         #print(expresion)
         nuevaExpresionComputable = computableExpresionWords(expresion)
+        #print(nuevaExpresionComputable)
         nuevaExpresionComputable = arreglarParentesis(nuevaExpresionComputable)
         nuevaExpresionComputable = currExp (nuevaExpresionComputable, charactersDict)
         #print(nuevaExpresionComputable)

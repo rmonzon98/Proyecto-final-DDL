@@ -24,6 +24,36 @@ class AFD:
                     j.setNewTransition(i[2],i[1])
         self.transitions = self.setInitialTransitions()
 
+    def deleteNulls(self):
+        nullKeys = []
+        for i in self.transitions:
+            temp = list(self.transitions.get(i))
+            if len(temp) == 0:
+                nullKeys.append(i)
+        for i in nullKeys:
+            self.transitions.pop(i, None)
+
+    def unifyTransitions(self):
+        #print(self.name, " ", self.transitions)
+        #print()
+        for i in self.transitions:
+            nodeTemp = self.transitions.get(i)
+            for j in nodeTemp:
+                insideValues = nodeTemp.get(j)
+                #print ("external key ", i, " inside key", j, insideValues)
+                if len(insideValues) >= 2:
+                    #print ("external key ", i, " inside key", j, insideValues)
+                    newset = set()
+                    newset.update(insideValues[0])
+                    newset.update(insideValues[1])
+                    #print(newset)
+                    #print("dos o más")
+                    nodeTemp[j] = newset
+        #print()
+        #print()
+            
+
+
     def correctTransitions(self, charactersDict, specialCharacters, special):
         keys = list(charactersDict.keys())
         values = list(charactersDict.values())
@@ -34,88 +64,86 @@ class AFD:
     def getValueAscii(self, character):
         return ord(character)
 
+    """
     def nextMove(self, initialNode, value):
-        #print("Next Move ",value,"(",chr(value),")")
-        possibleNodes = self.transitions.get(initialNode)
-        #print('possibleNodes ',possibleNodes)
+
+        print("Next Move ",value,"(",chr(value),") en ", self.name)
         found = False
-        if not(bool(possibleNodes)):
-            pass
-        else:
-            #print("Entra")
+        nextNode = None
+        acceptance = False
+        possibleNodes = self.transitions.get(initialNode)
+        try:
             keys = list(possibleNodes.keys())
-            #print(keys)
             values = list(possibleNodes.values())
-            #print(values)
-            if len(possibleNodes) == 1:
-                #print("largo 1")
-                values = values[0]
-                try:
-                    for i in values:                
-                        if value in i:
-                            """
-                            print("caracter encontrado")
-                            print("value ",value)
-                            print("values ",values[i])
-                            print(i)
-                            print(keys)
-                            """
-                            nextNode = keys[0]
-                            found = True
-                            #print("next node: ",nextNode)
-                            #print("valor del caracter: ",value)
-                            try:
-                                acceptance = self.afdAcceptanceDict.get(nextNode)
-                            except:
-                                acceptance = False
-                            return found, nextNode, acceptance, self.name
-                except:
-                    if value in values:
-                        """
-                        print("caracter encontrado")
-                        print("value ",value)
-                        print("values ",values[i])
-                        print(i)
-                        print(keys)
-                        """
-                        nextNode = keys[0]
-                        found = True
-                        #print("next node: ",nextNode)
-                        #print("valor del caracter: ",value)
-                        try:
-                            acceptance = self.afdAcceptanceDict.get(nextNode)
-                        except:
-                            acceptance = False
-                        return found, nextNode, acceptance, self.name
-            elif len(possibleNodes) == 2:
-                #print("Largo de dos")
-                #print(values)
-                #print(keys)
-                for i in range(0,len(values)):
-                    if value in values[i]:
-                        nextNode = keys[i]
-                        found = True
-                        try:
-                            acceptance = self.afdAcceptanceDict.get(nextNode)
-                        except:
-                            acceptance = False
-                        return found, nextNode, acceptance, self.name
-        if not(found):
-            return found, None, None, self.name
+        except:
+            #print("Regresa un ", found)
+            return found, nextNode, acceptance
+        #print(possibleNodes)
+        #print(keys)
+        #print(values)
+        #print(len(values))
+        try:
+            for i in range (0,len(values)):
+                temp = values[i][0]
+                #print(temp)
+                if value in temp:
+                    nextNode = keys[i]
+                    found = True
+        except:
+            if value in values[0]:
+                nextNode = keys[i]
+                found = True
+        #print(self.afdAcceptanceDict)
+        #print(nextNode)
+        acceptance = self.afdAcceptanceDict.get(nextNode)
+        return found, nextNode, acceptance
+    """    
     
+
+    def nextMove(self, initialNode, value):
+
+        #print("Next Move ",value,"(",chr(value),") en ", self.name)
+        found = False
+        nextNode = None
+        possibleNodes = self.transitions.get(initialNode)
+        acceptance = False
+        try:
+            keys = list(possibleNodes.keys())
+            values = list(possibleNodes.values())
+        except:
+            return found, nextNode, acceptance
+
+        try:
+            for i in range (0,len(values)):
+                temp = values[i][0]
+                #print(temp)
+                if value in temp:
+                    nextNode = keys[i]
+                    found = True
+        except:
+            if value in values[0]:
+                nextNode = keys[i]
+                found = True
+
+        acceptance = self.afdAcceptanceDict.get(nextNode)
+        return found, nextNode, acceptance
+        
+    """
     def simulation(self, expresion):
+        print("Inicia simulacion en", self.name, "con ", expresion)
         node = 0
         for i in expresion:
-            #print (i)
-            #print("transitions ",self.transitions)
-            #print("node ", node)
-            #print("name ", self.name)
-            found, node, acceptance, name = self.nextMove(node, self.getValueAscii(i))
-            if not(found):
-                #print("No se encontro ",i)
-                break
+            found, node, acceptance = self.nextMove(node, self.getValueAscii(i))
 
-        return found, acceptance, self.name
+        return found, acceptance
+    """
+    def simulation(self, expresion):
+        #print("Inicia simulacion en", self.name, "con ", expresion)
+        node = 0
+        for i in expresion:
+            found, node, acceptance = self.nextMove(node, self.getValueAscii(i))
+
+        return found, acceptance
             
     def setInitialTransitions(self):
         a = {}

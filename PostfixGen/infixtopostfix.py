@@ -10,7 +10,7 @@ def isEmpty(arrayContent):
 def arreglarParentesis(expresion):
   for i in range (0,len(expresion)):
     if expresion[i] == ")e":
-      expresion[i] = set({'41'})
+      expresion[i] = set({int('41')})
   return expresion
 
 def currExp(expresion, charactersDict):
@@ -36,7 +36,7 @@ def currExp(expresion, charactersDict):
           for j in range (0, len(temp)):
             #print(temp[j])
             ordValue = []
-            ordValue.append(str(ord(temp[j])))
+            ordValue.append(int(str(ord(temp[j]))))
             #print(ordValue)
             newSet = set()
             newSet.update(ordValue)
@@ -116,6 +116,8 @@ def computableExpresionWords(expresion):
     else: 
 
       if char.isalpha():
+        if expresion[i-1] in [")"]:
+          tempExp.append("_")
         word = word + char
 
       else:
