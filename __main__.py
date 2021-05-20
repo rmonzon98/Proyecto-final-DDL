@@ -5,7 +5,7 @@ from AFDFixed.AFD import *
 
 
 if __name__ == "__main__":
-    
+    print(chr(41))
     archivo = input('Ingrese el nombre del archivo: ')
     characters, keywords, tokens, nameATG = read_file(archivo)
     print("-"*40,nameATG,"-"*40)
@@ -19,19 +19,22 @@ if __name__ == "__main__":
     for i in tokens:
         print(chr(9)+i)
     
+    print("")
+    print("")
+    
     specialCharacters = {}
     special = {}
     specialCharacters.update({'C' : set([67]), 'H' : set([72]), 'R' : set([82]), '(' : set([40]), ')' : set([41]), '/' : set([47]), '.' : set([46]), "'" : set([39])})
     special.update({'C':'a', 'H':'b', 'R':'c', '(':'d', ')':'e', '/':'f', '.':'g', "'" :'h'})
 
     charactersDict = createCharactersDict(characters)
-    print('charactersDict',charactersDict)
+    #print('charactersDict',charactersDict)
     KeywordsDict = createKeywordsDict(charactersDict,keywords)
-    print('KeywordsDict',KeywordsDict)
-    tokensDict, exceptions = createTokensDict(charactersDict, tokens, specialCharacters, special)
-    print('tokensDict',tokensDict)
+    #print('KeywordsDict',KeywordsDict)
+    tokensDict, exceptions = createTokensDict(charactersDict, tokens)
+    #print('tokensDict',tokensDict)
     tokensArray = functionsCreator(tokensDict, charactersDict)
-    
+"""
     for i in tokensArray:
         print(i.getTransitions())
         i.correctTransitions(charactersDict, specialCharacters, special)
@@ -134,3 +137,4 @@ if __name__ == "__main__":
     scanner.writeSentence('#print(tokensFound)')
 
     print(".py escrito con exito")
+"""

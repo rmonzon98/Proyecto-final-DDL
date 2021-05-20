@@ -10,9 +10,16 @@ def validChar(char):
   else: 
     return False
 
+def validOperator(char):
+  if char in ["*","_","|","?","+"]:
+    return True
+  else:
+    return False
+  
+
 class leaf:
   def __init__(self,character,pos = None,c1 = None,c2=None):
-    if validChar(character):
+    if not(validOperator(character)):
       if character =="ε":
         self.typeLeaf = "e"
         self.primerapos = []

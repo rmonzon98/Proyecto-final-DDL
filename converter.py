@@ -185,75 +185,70 @@ def createKeywordsDict(charactersDict, keywords):
     return keywordsDict
 
 #Leer README
-def createTokensDict(charactersDict, tokens, specialCharacters, special):
-    specialKeys = list(specialCharacters.keys())
-    specialValues = list(special.values())
+def createTokensDict(charactersDict, tokens):
     keys = list(charactersDict.keys())
     tokensDict = {}
     exceptions = []
+
     for i in tokens:
+
         if not ("IGNORE SET ignore" in i):
             index = i.index("=") + 2
             name = i[:index-3]  #Se toma el nombre del character
-            info = i[index:].replace('"', '')
+            info = i[index:]
             dotOccurrence = info.count('.')
             indexDot = info.find(".")
-
-            if dotOccurrence == 2 and (info[indexDot-1]=='"' and info[indexDot+1]=='"'):
-                info = info[:indexDot-1]+""+info[indexDot+2:]
 
             if "EXCEPT " in info:
                 index = info.index("EXCEPT ") + 7
                 tempExc = info[index:len(info)-1]
                 exceptions.append(tempExc)
-                info = info.replace((' EXCEPT '+ tempExc+'.'), '')
+                info = info.replace((' EXCEPT '+ tempExc+'.'), '.')
             else:
                 exceptions.append(None)
-
-            if " " in info:
-                info = info.replace(' ', '')
-
-            if "hexdigit" in info:
-                index = keys.index("hexdigit")
-                info = info.replace('hexdigit',str(index))
-            if "stringletter" in info:
-                index = keys.index("stringletter")
-                info = info.replace('stringletter',str(index))
             
-            for j in range (0,len(keys)):
-                if keys[j] in info:
-                    info = info.replace(keys[j], str(j))
-
             if '.' in info[len(info)-1]:
                 info = info[:len(info)-1]
-                for j in range (0, len(specialKeys)):
-                    if specialKeys[j] in info:
-                        info = info.replace(specialKeys[j], specialValues[j])
                 if "[" in info:
                     info = info.replace('[', '(ε|').replace(']', ')')
                 info = info.replace('{', '(').replace('}', ')*')
                 tokensDict.update({name:info})
+            
             else:
-                for j in range (0, len(specialKeys)):
-                    if specialKeys[j] in info:
-                        info = info.replace(specialKeys[j], specialValues[j])
                 if "[" in info:
                     info = info.replace('[', '(ε|').replace(']', ')')
                 info = info.replace('{', '(').replace('}', ')*')
                 tokensDict.update({name:info})
+
     return tokensDict,exceptions
 
 #Leer README
-def functionsCreator(tokensDict, KeywordsDict):
+def functionsCreator(tokensDict, charactersDict):
     tokensArray = []
+
     for i in list(tokensDict.keys()):
         expresion = convertOperators(tokensDict.get(i))
-        nuevaExpresionComputable = computableExpresion(expresion)
-        postfixexpNueva = infixaPostfix(nuevaExpresionComputable)+["#","_"]
+        #print(expresion)
+        nuevaExpresionComputable = computableExpresionWords(expresion)
+        nuevaExpresionComputable = arreglarParentesis(nuevaExpresionComputable)
+        nuevaExpresionComputable = currExp (nuevaExpresionComputable, charactersDict)
+        #print(nuevaExpresionComputable)
+        postfixexpNueva = infixaPostfixWords(nuevaExpresionComputable)+["#","_"]
+        #print(postfixexpNueva) 
+        #print("")
+
         labelsDstates, acceptance, acceptanceDict = buildAFD(postfixexpNueva)
+        print(expresion)
+        print(postfixexpNueva)
+        print(labelsDstates)
+        print(acceptance)
+        print(acceptanceDict)
+        print()
+        """
         newAFD = AFD(i)
         newAFD.firstConstructor(labelsDstates, acceptanceDict)
-        print(labelsDstates)
-        print(acceptanceDict)
         tokensArray.append(newAFD)
+        print("")
+        """
+    print("")
     return tokensArray

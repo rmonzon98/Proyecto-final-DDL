@@ -2,6 +2,163 @@ EPSILON = 'ε'
 precedence = {'(':0, '|':1, '_':2,'*':3,'?':3, '+':3} 
 operatorsVal = ["*","_","|","?","+"]
 notAlphabet = ["*","_","|","(",")","?"]
+notWords = ["*","_","|","?","+","(",")"]
+
+def isEmpty(arrayContent):
+  return True if len(arrayContent) == 0 else False
+
+def arreglarParentesis(expresion):
+  for i in range (0,len(expresion)):
+    if expresion[i] == ")e":
+      expresion[i] = set({'41'})
+  return expresion
+
+def currExp(expresion, charactersDict):
+  #print(expresion)
+  keys = list(charactersDict.keys())
+  values = list(charactersDict.values())
+  newExp = []
+  for i in range (0,len(expresion)):
+    temp = expresion[i]
+    #print(temp)
+    #print(temp)
+    if temp in keys:
+      index = keys.index(temp)
+      valuesFromKey = values[index]
+      newExp.append(valuesFromKey)
+    else:
+      if temp in ["*","_","|","(",")","?"] or temp == EPSILON:
+        newExp.append(temp)
+      else:
+        if type(temp) == set:
+          newExp.append(temp)
+        else:
+          for j in range (0, len(temp)):
+            #print(temp[j])
+            ordValue = []
+            ordValue.append(str(ord(temp[j])))
+            #print(ordValue)
+            newSet = set()
+            newSet.update(ordValue)
+            #print(newSet)
+            #print(j == len(temp)-1)
+            #print(ordValue)
+            if not(j == len(temp)-1):
+              newExp.append(newSet)
+              newExp.append("_")
+            else:
+              newExp.append(newSet)
+
+        
+    #print (temp in keys)
+  #print(newExp)
+  return newExp
+
+def infixaPostfixWords(exp):
+  #print("infixtopostfix")
+  output = []
+  operators =[]
+  for i in exp:
+    #print(i)
+    if i not in notAlphabet:
+      output.append(i)
+    else:
+      #print("Entra con", i)
+      if i in operatorsVal:
+        while( (not isEmpty(operators)) and lessThan(operators,i)):
+          output.append(operators.pop())
+        operators.append(i)
+      elif i == "(": 
+        operators.append(i)
+      elif i == ")":
+        quantity = operators.count("(")
+        flag = quantity
+        while(not isEmpty(operators) and "(" in operators and quantity == flag):
+          if ("(" == lastElement(operators)):
+            operators.pop()
+            flag = flag - 1
+          else: 
+            output.append(operators.pop())
+      else:
+        return "Error"     
+  while((not isEmpty(operators))):
+    output.append(operators.pop())
+  return output
+
+def computableExpresionWords(expresion):
+  tempExp = []
+  word =""
+  comillaflag = False
+
+  for i in range(0,len(expresion)):
+    char = expresion[i]
+
+    if comillaflag:
+
+      if char == '"':
+        try:
+          if not (tempExp[len(tempExp) - 1] == "|"):
+            tempExp.append("_")
+        except:
+          pass
+        if word == ")":
+          word = ")e"
+        tempExp.append(word)
+        word = ""
+        try:
+          nextChar = expresion[i + 1]
+          if nextChar.isalpha():
+            tempExp.append("_") 
+        except:
+          pass
+        comillaflag = False
+      else:
+        word = word + char
+
+    else: 
+
+      if char.isalpha():
+        word = word + char
+
+      else:
+
+        if char == "(":
+          if not (word == ""):
+            tempExp.append(word)
+            word = ""
+          temp = tempExp[len(tempExp) - 1]
+          if not(char == "|"):
+            tempExp.append("_")
+          tempExp.append(char)
+
+        elif char in ["*", "_", "|", "?", "+", ")"]:
+          if not (word == ""):
+            tempExp.append(word)
+            word = ""
+          tempExp.append(char)
+
+        elif char == " ":
+          if not (word == ""):
+            tempExp.append(word)
+            word = ""
+          tempExp.append("_")
+
+        elif '"':
+          if not(word == ""):
+            tempExp.append(word)
+            word = ""
+          comillaflag = True
+
+  if not (word == ""):
+    try: 
+      if not(tempExp[len(tempExp) - 1] in ["|","_"]):
+        tempExp.append("_")
+    except:
+      pass
+    tempExp.append(word)
+    word = ""
+
+  return tempExp
 
 def convertOperators(expresion):
   newExpresion=""
@@ -66,6 +223,8 @@ def getAlphabet(expresion):
   return alphabet
 
 
+
+
 def computableExpresion(expresion):
   nuevaexpresion = ""
   for i in range(0,len(expresion)):
@@ -98,8 +257,7 @@ def computableExpresion(expresion):
         nuevaexpresion = nuevaexpresion + expresion[i]
   return nuevaexpresion     
     
-def isEmpty(arrayContent):
-  return True if len(arrayContent) == 0 else False
+
 
 def lastElement(arrayContent):
   return arrayContent[len(arrayContent)-1]
@@ -116,6 +274,9 @@ def lessThan(arrayContent,character):
       return False
   except KeyError:
     return False
+
+
+
 
 def infixaPostfix(exp):
   output = []

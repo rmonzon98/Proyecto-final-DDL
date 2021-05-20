@@ -4,17 +4,19 @@ def buildAFD(expresion):
     #print(expresion)
     alphabet = [] 
     for i in expresion:
-        if validChar(i):
+        if not (validOperator(i)):
             if not i in ["#","ε"]:
                 if not i in alphabet:
                     alphabet.append(i)
-    #print(alphabet)
+    
+    #print(expresion, " Alfabeto: ",alphabet)
+
     tree = []
     auxiliarTree = []
     cont = 1
     for i in expresion:
         #print(i)
-        if validChar(i):
+        if not (validOperator(i)):
             if not i == "ε":
                 temp = leaf(i,cont)
                 tree.append(temp)
@@ -69,6 +71,7 @@ def buildAFD(expresion):
                 temp.setUltimaPos(first.getUltimaPos())
                 tree.append(temp)
                 auxiliarTree.append(temp)
+
     #for i in auxiliarTree:
         #print(i.toString())
     cont = cont
