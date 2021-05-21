@@ -127,22 +127,13 @@ class AFD:
 
         acceptance = self.afdAcceptanceDict.get(nextNode)
         return found, nextNode, acceptance
-        
-    """
-    def simulation(self, expresion):
-        print("Inicia simulacion en", self.name, "con ", expresion)
-        node = 0
-        for i in expresion:
-            found, node, acceptance = self.nextMove(node, self.getValueAscii(i))
 
-        return found, acceptance
-    """
     def simulation(self, expresion):
         #print("Inicia simulacion en", self.name, "con ", expresion)
         node = 0
         for i in expresion:
             found, node, acceptance = self.nextMove(node, self.getValueAscii(i))
-
+        #print("finaliza ", found)
         return found, acceptance
             
     def setInitialTransitions(self):

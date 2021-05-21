@@ -6,15 +6,7 @@ def get_key(val, my_dict):
         if val == value:
             return key
     return "key doesn't exist"
-
-def isHigher(val1, val2):
-    if val1 < val2:
-        return True
-    else:
-        return False
-    
-
-
+ 
 exceptions = ['while','do','if','switch']
 precedence = {'ident': 0, 'string': 1, 'char': 2, 'charnumber': 3, 'charinterval': 4, 'nontoken': 5, 'startcode': 6, 'endcode': 7}
 
@@ -112,24 +104,32 @@ for i in range (0,len(precedence)):
     
 
 for i in text: 
-    for k in range (0,len(precedence)):
-        foundArray[k] = None
-    
-    for k in range (0,len(precedence)):
-        acceptanceArray[k] = None
 
     temp = temp + i
+
+    for k in range (0,len(precedence)):
+        foundArray[k] = None
+    for k in range (0,len(precedence)):
+        acceptanceArray[k] = None
 
     for j in range (0,len(precedence)):
         found, acceptance = adfArray[j].simulation(temp)
         foundArray[j] = found
         acceptanceArray[j] = acceptance
 
+    #print(temp, " ", foundArray)
     if True in foundArray:
         if True in acceptanceArray:
-            previousName = get_key(acceptanceArray.index(True),precedence)
+            tempAcceptanceArray = []
+            for c in range(0,len(acceptanceArray)):
+                if acceptanceArray[c]:
+                    tempAcceptanceArray.append(c)
+            index = min(tempAcceptanceArray)
+            previousName = get_key(index,precedence)
+            tokenName = get_key(index,precedence)
             previousFound = True
             previousAcceptance = True
+            tempToken = temp 
         else:
             previousName = get_key(foundArray.index(True),precedence)
             previousFound = True
@@ -137,30 +137,62 @@ for i in text:
     else:
 
         if not(previousName == ''):
-            tokensFound.append([temp[:len(temp)-1],previousName])
-            temp = temp[len(temp)-1]
-            found = False
-            previousName = ''
+            tokensFound.append([tempToken,tokenName])
+            #print("token", tempToken, " tipo", previousName)
+            #print(temp)
+            temp = temp.replace(tempToken,'')
+            #print(temp)
+            if len(temp) == 1:
+                found = False
+                previousName = ''
 
-            for k in range (0,len(precedence)):
-                foundArray[k] = None
+                for k in range (0,len(precedence)):
+                    foundArray[k] = None
+                for k in range (0,len(precedence)):
+                    acceptanceArray[k] = None
+                for l in range (0,len(adfArray)):
+                    found, acceptance = adfArray[l].simulation(temp)
+                    foundArray[l] = found
+                    acceptanceArray[l] = acceptance
 
-            for k in range (0,len(precedence)):
-                acceptanceArray[k] = None
+                if True in foundArray:
+                    if True in acceptanceArray:
+                        tempAcceptanceArray = []
+                        for c in range(0,len(acceptanceArray)):
+                            if acceptanceArray[c]:
+                                tempAcceptanceArray.append(c)
+                        index = min(tempAcceptanceArray)
+                        previousName = get_key(index,precedence)
+                        tokenName = get_key(index,precedence)
+                        previousFound = True
+                        previousAcceptance = True
+                        tempToken = temp 
+                    else:
+                        previousName = get_key(foundArray.index(True),precedence)
+                        previousFound = True
+            
+            elif len(temp) > 0:
 
-            for l in range (0,len(adfArray)):
-                found, acceptance = adfArray[l].simulation(temp)
-                foundArray[l] = found
-                acceptanceArray[l] = acceptance
+                for j in range (0,len(precedence)):
+                    found, acceptance = adfArray[j].simulation(temp[0])
+                    if acceptance:
+                        tokensFound.append([temp[0], adfArray[j].getName()])
+                        break
 
-            if True in foundArray:
-                if True in acceptanceArray:
-                    previousName = get_key(acceptanceArray.index(True),precedence)
-                    previousFound = True
-                    previousAcceptance = True
-                else:
-                    previousName = get_key(foundArray.index(True),precedence)
-                    previousFound = True
+                for j in range (0,len(precedence)):
+                    found, acceptance = adfArray[j].simulation(temp[1])
+                    if acceptance:
+                        tokensFound.append([temp[1], adfArray[j].getName()])
+                        break
+                
+                for j in range (0,len(precedence)):
+                    found, acceptance = adfArray[j].simulation(temp)
+                    if acceptance:
+                        tokensFound.append([temp, adfArray[j].getName()])
+                        break
+
+                temp = ''
+                    
         
         else:
             temp = ''
