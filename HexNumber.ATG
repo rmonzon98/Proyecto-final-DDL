@@ -15,7 +15,8 @@ hexterm = "H".
 tab = CHR(9).
 eol = CHR(10).
 whitespace = CHR(13)+eol+tab+CHR(13).
-sign = "+"+"-".
+sign = "-".
+MyANY = ANY-eol.
 
 KEYWORDS
 
@@ -29,6 +30,37 @@ hexnumber = hexdigit{hexdigit}hexterm EXCEPT KEYWORDS.
 number = digit{digit}.
 signnumber = [sign]digit{digit}.
 whitetoken = whitespace{whitespace}.
+ANY = MyANY.
 
+PRODUCTIONS
 
+Expr = {Stat (";")}"."
+.
+
+Stat = 							(.value = 0  .)(.value = input().)
+
+	Expression< ref value>		
+	.
+
+Expression<ref int result> =		(.result1 = 0.)(.result2 = 0.)
+	Term< ref result1>
+	{    "+"Term< ref result2>		(.result1+=result2.)
+	   | "-"Term< ref result2>		(.result1-=result2.)
+	}							(.result=result1.)
+	.
+
+Term<ref int result> =				(.result1 = 0.)(.result2 = 0.)
+	Factor<ref result1>
+	{    "*"Factor<ref result2>	(.result1*=result2.)
+	   | "/"Factor<ref result2>	(.result1/=result2.)
+	}							(.result=result1.)
+	.
+	
+Factor<ref int result> =	(.signo=1.)
+	["-"(.signo = -1.)]
+	( Number<ref result> | "("Expression< ref result>")") (.result*=signo.)
+	.
+	
+Number<ref int result> =  (.result = int(value).)
+.
 END HexNumber

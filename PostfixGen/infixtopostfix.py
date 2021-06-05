@@ -126,9 +126,12 @@ def computableExpresionWords(expresion):
           if not (word == ""):
             tempExp.append(word)
             word = ""
-          temp = tempExp[len(tempExp) - 1]
-          if not(char == "|"):
-            tempExp.append("_")
+          try:  
+            temp = tempExp[len(tempExp) - 1]
+            if not(char == "|"):
+              tempExp.append("_")
+          except:
+            pass
           tempExp.append(char)
 
         elif char in ["*", "_", "|", "?", "+", ")"]:

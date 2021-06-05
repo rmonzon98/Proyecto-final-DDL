@@ -2,12 +2,13 @@ from os import write
 from EscrituraPy.fileWritter import *
 from LecturaATG.fileReader import read_file
 from converter import *
+from Productions.Productions import *
 from AFDFixed.AFD import *
 
 
 if __name__ == "__main__":
     archivo = input('Ingrese el nombre del archivo: ')
-    characters, keywords, tokens, nameATG = read_file(archivo)
+    characters, keywords, tokens, productions, nameATG = read_file(archivo)
     print("-"*40,nameATG,"-"*40)
     print("Characters:")
     for i in characters:
@@ -18,10 +19,13 @@ if __name__ == "__main__":
     print("Tokens:")
     for i in tokens:
         print(chr(9)+i)
+    print("Productions:")
+    for i in productions:
+        print(chr(9)+i)
     
     print("")
     print("")
-    
+
     print("Escribiendo .py")
 
     charactersDict = createCharactersDict(characters)
@@ -32,7 +36,8 @@ if __name__ == "__main__":
     #print('tokensDict',tokensDict)
     tokensArray = functionsCreator(tokensDict, charactersDict)
     
-   
+    print("Escribiendo listas de characters, keywords y tokens")
+
     adfArray = []
     for i in tokensArray:
         name = i.getName()
@@ -53,7 +58,7 @@ if __name__ == "__main__":
         precedence.update({name:i})
     #print(precedence)
 
-
+    print("Automatas generados")
 
     exceptions = ['while','do','if','switch']
 
@@ -80,6 +85,7 @@ def isHigher(val1, val2):
     scanner.addDict("precedence", precedence)
     adfArray = []
     scanner.writeSentence('adfArray = []')
+    print("Escribiendo automatas")
     for i in tokensArray:
         name = i.getName()
         scanner.addString(name, name)
@@ -120,6 +126,7 @@ for i in range (0,len(precedence)):
     
 
 for i in text: 
+
     for k in range (0,len(precedence)):
         foundArray[k] = None
     
@@ -129,24 +136,31 @@ for i in text:
     temp = temp + i
 
     for j in range (0,len(precedence)):
+        
         found, acceptance = adfArray[j].simulation(temp)
         foundArray[j] = found
         acceptanceArray[j] = acceptance
 
     if True in foundArray:
+        
         if True in acceptanceArray:
             previousName = get_key(acceptanceArray.index(True),precedence)
             previousFound = True
             previousAcceptance = True
+            previousToken = temp
         else:
-            previousName = get_key(foundArray.index(True),precedence)
-            previousFound = True
+            try:
+                previousName = get_key(acceptanceArray.index(True),precedence)
+                previousFound = True
+                previousAcceptance = False
+            except:
+                pass
 
     else:
+        
+        if previousFound and not(previousName == ''):
+            tokensFound.append([previousToken,previousName])
 
-        if not(previousName == ''):
-            tokensFound.append([temp[:len(temp)-1],previousName])
-            temp = temp[len(temp)-1]
             found = False
             previousName = ''
 
@@ -155,6 +169,8 @@ for i in text:
 
             for k in range (0,len(precedence)):
                 acceptanceArray[k] = None
+
+            temp = temp.replace(previousToken,'')
 
             for l in range (0,len(adfArray)):
                 found, acceptance = adfArray[l].simulation(temp)
@@ -166,19 +182,110 @@ for i in text:
                     previousName = get_key(acceptanceArray.index(True),precedence)
                     previousFound = True
                     previousAcceptance = True
+                    previousToken = temp
                 else:
-                    previousName = get_key(foundArray.index(True),precedence)
-                    previousFound = True
-        
+                    try:
+                        previousName = get_key(acceptanceArray.index(True),precedence)
+                        previousFound = True
+                        previousAcceptance = False
+                    except:
+                        pass
+
+            else:
+                temp = ''
+            
         else:
             temp = ''
 
-if True in foundArray:
+if True in foundArray and not(previousName == ''):
     previousName = get_key(foundArray.index(True),precedence)
     tokensFound.append([temp,previousName])
 
-for i in tokensFound:
-    print(i)
+with open('tokens.txt', 'w') as temp_file:
+    for item in tokensFound:
+        temp_file.write("%s"""
+    paragraph = paragraph + chr(92) + 'n" % item)'
+    scanner.addParagraph(paragraph)
+    scanner.writeSentence('print("Documento con tokens escrito con exito")')
+    scanner.writeSentence('')
+    scanner.writeSentence('')
+    print("Se inicia a escribir la clase parser dentro del .py")
+    print("Se crean las productions")
+    paragraph = """class Parser:
+    def __init__(self,tokens):
+        self.tokens = tokens
+        self.pos_token = 0
+        self.actual_token = tokens[self.pos_token]
+        self.last_token = ''
+    
+    def getType(self, token):
+        try:
+            return token[1]
+        except:
+            return token
+
+    def getValue(self, token):
+        try:
+            return token[0]
+        except:
+            return token
+    
+    def advance(self):
+        self.pos_token += 1
+        if self.pos_token < len(self.tokens):
+            self.actual_token = self.tokens[self.pos_token]
+            self.last_token = self.tokens[self.pos_token -1]
+    
+    def read (self, value, typeToken = False, end = False):
+        if typeToken:
+            if self.getType(self.actual_token) == value:
+                self.advance()
+                return True
+            else:
+                print("Ha ocurrido un error")
+                return False
+        else:
+            if self.getValue(self.actual_token) == value:
+                self.advance()
+                return True
+            else:
+                if end:
+                    print("Ha ocurrido un error")
+                return False
+                
+    def hextofloat(self,value):
+        value = value[:len(value)-1]
+        newvalue = 0 
+        for n in range(0,len(value)):
+
+            exp = len(value)-(n+1)
+            if value[n] in ["A", "B", "C", "D", "E", "F"]:
+                if value[n] == "A":
+                    newvalue = newvalue + (10 * (16**exp))
+                if value[n] == "B":
+                    newvalue = newvalue + (11 * (16**exp))
+                if value[n] == "C":
+                    newvalue = newvalue + (12 * (16**exp))
+                if value[n] == "D":
+                    newvalue = newvalue + (13 * (16**exp))
+                if value[n] == "E":
+                    newvalue = newvalue + (14 * (16**exp))
+                if value[n] == "F":
+                    newvalue = newvalue + (15 * (16**exp))
+
+            else:
+                newvalue = newvalue + (int(value[n]) * (16**exp))
+
+        print(value," se convierte en ", newvalue)
+        return newvalue
+    
+    """
+    scanner.addParagraph(paragraph)
+    productions = createProductions(productions)
+    for i in productions:
+        scanner.addParagraph(productions.get(i))
+    paragraph= """parser = Parser(tokensFound)
+parser.Expr()
     """
     scanner.addParagraph(paragraph)
 

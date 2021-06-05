@@ -40,30 +40,41 @@ for i in range (0,len(precedence)):
     
 
 for i in text: 
+
     for k in range (0,len(precedence)):
         foundArray[k] = None
+    
+    for k in range (0,len(precedence)):
+        acceptanceArray[k] = None
 
     temp = temp + i
 
     for j in range (0,len(precedence)):
+        
         found, acceptance = adfArray[j].simulation(temp)
         foundArray[j] = found
         acceptanceArray[j] = acceptance
 
     if True in foundArray:
+        
         if True in acceptanceArray:
             previousName = get_key(acceptanceArray.index(True),precedence)
             previousFound = True
             previousAcceptance = True
+            previousToken = temp
         else:
-            previousName = get_key(acceptanceArray.index(True),precedence)
-            previousFound = True
+            try:
+                previousName = get_key(acceptanceArray.index(True),precedence)
+                previousFound = True
+                previousAcceptance = False
+            except:
+                pass
 
     else:
+        
+        if previousFound and not(previousName == ''):
+            tokensFound.append([previousToken,previousName])
 
-        if not(previousName == ''):
-            tokensFound.append([temp[:len(temp)-1],previousName])
-            temp = temp[len(temp)-1]
             found = False
             previousName = ''
 
@@ -72,6 +83,8 @@ for i in text:
 
             for k in range (0,len(precedence)):
                 acceptanceArray[k] = None
+
+            temp = temp.replace(previousToken,'')
 
             for l in range (0,len(adfArray)):
                 found, acceptance = adfArray[l].simulation(temp)
@@ -83,14 +96,25 @@ for i in text:
                     previousName = get_key(acceptanceArray.index(True),precedence)
                     previousFound = True
                     previousAcceptance = True
+                    previousToken = temp
                 else:
-                    previousName = get_key(foundArray.index(True),precedence)
-                    previousFound = True
+                    try:
+                        previousName = get_key(acceptanceArray.index(True),precedence)
+                        previousFound = True
+                        previousAcceptance = False
+                    except:
+                        pass
 
-if True in foundArray:
+            else:
+                temp = ''
+            
+        else:
+            temp = ''
+
+if True in foundArray and not(previousName == ''):
     previousName = get_key(foundArray.index(True),precedence)
     tokensFound.append([temp,previousName])
 
-for i in tokensFound:
-    print(i)
-    
+with open('tokens.txt', 'w') as temp_file:
+    for item in tokensFound:
+        temp_file.write("%s\n" % item)
