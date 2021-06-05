@@ -198,6 +198,32 @@ class Parser:
                 if end:
                     print("Ha ocurrido un error")
                 return False
+                
+    def hextofloat(self,value):
+        value = value[:len(value)-1]
+        newvalue = 0 
+        for n in range(0,len(value)):
+
+            exp = len(value)-(n+1)
+            if value[n] in ["A", "B", "C", "D", "E", "F"]:
+                if value[n] == "A":
+                    newvalue = newvalue + (10 * (16**exp))
+                if value[n] == "B":
+                    newvalue = newvalue + (11 * (16**exp))
+                if value[n] == "C":
+                    newvalue = newvalue + (12 * (16**exp))
+                if value[n] == "D":
+                    newvalue = newvalue + (13 * (16**exp))
+                if value[n] == "E":
+                    newvalue = newvalue + (14 * (16**exp))
+                if value[n] == "F":
+                    newvalue = newvalue + (15 * (16**exp))
+
+            else:
+                newvalue = newvalue + (int(value[n]) * (16**exp))
+
+        print(value," se convierte en ", newvalue)
+        return newvalue
     
     
     def Expr(self):
@@ -291,13 +317,12 @@ class Parser:
             self.read('decnumber',True, True)
 
         if self.getType(self.actual_token) == 'hexnumber':
-            self. read('decnumber', True, True)
-            result = hextofloat(self.getValue(last_token))
+            self. read('hexnumber', True, True)
 
         try:
             result = float(self.getValue(self.last_token))
         except:
-            result = hextofloat(self.getValue(last_token))
+            result = self.hextofloat(self.getValue(self.last_token))
 
         return result
             

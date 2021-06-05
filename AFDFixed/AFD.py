@@ -62,43 +62,7 @@ class AFD:
         self.transitions = self.getNewTransitions()
     
     def getValueAscii(self, character):
-        return ord(character)
-
-    """
-    def nextMove(self, initialNode, value):
-
-        print("Next Move ",value,"(",chr(value),") en ", self.name)
-        found = False
-        nextNode = None
-        acceptance = False
-        possibleNodes = self.transitions.get(initialNode)
-        try:
-            keys = list(possibleNodes.keys())
-            values = list(possibleNodes.values())
-        except:
-            #print("Regresa un ", found)
-            return found, nextNode, acceptance
-        #print(possibleNodes)
-        #print(keys)
-        #print(values)
-        #print(len(values))
-        try:
-            for i in range (0,len(values)):
-                temp = values[i][0]
-                #print(temp)
-                if value in temp:
-                    nextNode = keys[i]
-                    found = True
-        except:
-            if value in values[0]:
-                nextNode = keys[i]
-                found = True
-        #print(self.afdAcceptanceDict)
-        #print(nextNode)
-        acceptance = self.afdAcceptanceDict.get(nextNode)
-        return found, nextNode, acceptance
-    """    
-    
+        return ord(character) 
 
     def nextMove(self, initialNode, value):
 
